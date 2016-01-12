@@ -124,8 +124,8 @@ int main()
 	printf("\tdone\n");
 	// run time loops
 	printf("\n\nRun time loops and calculate on GPU...\n");
-    clockstart(&start, &past);
-    block_bound = (Nx*Nz+Tpb-1)/Tpb;
+	clockstart(&start, &past);
+	block_bound = (Nx*Nz+Tpb-1)/Tpb;
 	for(step=0; step<no_step; step++)
 	{		
 		gpu_Fp_Gp_Hp<<<block, Tpb>>>(U, air, Fp, Gp, Hp);
@@ -214,7 +214,7 @@ void sendbackgpu(float *h_U)
 	printf("\nSend data back from GPU...");
 	size_t sz5 = 5*Nt*sizeof(float);
 	if( cudaMemcpy(h_U, U, sz5, cudaMemcpyDeviceToHost) != cudaSuccess) {
-			printf("\n... Something failed...\n");
+		printf("\n... Something failed...\n");
 	} else	printf("\tdone\n");
 }
 
@@ -234,8 +234,8 @@ void clockprint(struct timeval start, int k, int total, struct timeval *past)
 	left = ((now.tv_sec-past->tv_sec)+(now.tv_usec-past->tv_usec)/1000000.0)*(total-k);
 	printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
 	printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
-    printf("%3d %%  %8.3f sec  left %4.0f sec  predict %4.0f sec", (k*100)/total, dur, left, dur+left);
-    gettimeofday(past, NULL);
+	printf("%3d %%  %8.3f sec  left %4.0f sec  predict %4.0f sec", (k*100)/total, dur, left, dur+left);
+	gettimeofday(past, NULL);
 }
 
 void clockend(struct timeval start)
@@ -246,76 +246,77 @@ void clockend(struct timeval start)
 	dur  = (now.tv_sec-start.tv_sec)+(now.tv_usec-start.tv_usec)/1000000.0;
 	printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
 	printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
-    printf("100 %%  %8.3f sec  left %4.0f sec  predict %4.0f sec\n\n", dur, 0.0, dur);
+	printf("100 %%  %8.3f sec  left %4.0f sec  predict %4.0f sec\n\n", dur, 0.0, dur);
 }
 
 int Load_X_37(float *air)
 {
-    printf("Loading the mesh points of the model of X-37...\n");
+	
+	printf("Loading the mesh points of the model of X-37...\n");
     
-    int i, k;
-    float x, y, z;
-    float *normal, *edge1, *edge2, *edge3;
-    char v[20];
-    FILE *fin;
-    struct timeval start, past;
-    size_t size_x37p;
+	int i, k;
+	float x, y, z;
+	float *normal, *edge1, *edge2, *edge3;
+	char v[20];
+	FILE *fin;
+	struct timeval start, past;
+	size_t size_x37p;
     
-    size_x37p = 3*(N_x37p+1)*sizeof(float);
-    normal = (float *)_mm_malloc(size_x37p, 32);
-    edge1  = (float *)_mm_malloc(size_x37p, 32);
-    edge2  = (float *)_mm_malloc(size_x37p, 32);
-    edge3  = (float *)_mm_malloc(size_x37p, 32);
+	size_x37p = 3*(N_x37p+1)*sizeof(float);
+	normal = (float *)_mm_malloc(size_x37p, 32);
+	edge1  = (float *)_mm_malloc(size_x37p, 32);
+	edge2  = (float *)_mm_malloc(size_x37p, 32);
+	edge3  = (float *)_mm_malloc(size_x37p, 32);
     
-    fin = fopen("X_37_Coarse_STL.txt", "r");
-    if(!fin) {
-    	printf("\nCouldn't find \"X_37_Coarse_STL.txt\" QwQ...\nplease check the file!\n\n\n");
-    	return -1;
+	fin = fopen("X_37_Coarse_STL.txt", "r");
+	if(!fin) {
+    		printf("\nCouldn't find \"X_37_Coarse_STL.txt\" QwQ...\nplease check the file!\n\n\n");
+    		return -1;
 	}
     
-    clockstart(&start, &past);
+	clockstart(&start, &past);
 	// Load loop
-    i = 0;
-    for(k=0; k<N_x37; k++)
+	i = 0;
+	for(k=0; k<N_x37; k++)
 	{
-        // load normal vector
+        	// load normal vector
 		fscanf(fin, "%s%s%s%s%e%e%e", v, v, v, v, &x, &z, &y);
 		// rotation
 		normal[i]   = x*cos40-z*sin40;	// nx
 		normal[i+1] = y;				// ny
 		normal[i+2] = x*sin40+z*cos40;	// nz
 		// load edge position
-    	fscanf(fin, "%s%s%s%e%e%e", v, v, v, &x, &z, &y);
-    	// rotation and translation
-    	edge1[i]   = x*cos40-z*sin40+tranx;	// x1
-    	edge1[i+1] = y+trany;				// y1
-    	edge1[i+2] = x*sin40+z*cos40+tranz;	// z1
-    	fscanf(fin, "%s%e%e%e", v, &x, &z, &y);
-    	edge2[i]   = x*cos40-z*sin40+tranx; // x2
-    	edge2[i+1] = y+trany;               // y2
-    	edge2[i+2] = x*sin40+z*cos40+tranz; // z2
-    	fscanf(fin, "%s%e%e%e", v, &x, &z, &y);
-    	edge3[i]   = x*cos40-z*sin40+tranx; // x3
-    	edge3[i+1] = y+trany;               // y3
-    	edge3[i+2] = x*sin40+z*cos40+tranz; // z3
+    		fscanf(fin, "%s%s%s%e%e%e", v, v, v, &x, &z, &y);
+    		// rotation and translation
+    		edge1[i]   = x*cos40-z*sin40+tranx;	// x1
+    		edge1[i+1] = y+trany;				// y1
+    		edge1[i+2] = x*sin40+z*cos40+tranz;	// z1
+    		fscanf(fin, "%s%e%e%e", v, &x, &z, &y);
+    		edge2[i]   = x*cos40-z*sin40+tranx; // x2
+    		edge2[i+1] = y+trany;               // y2
+    		edge2[i+2] = x*sin40+z*cos40+tranz; // z2
+    		fscanf(fin, "%s%e%e%e", v, &x, &z, &y);
+    		edge3[i]   = x*cos40-z*sin40+tranx; // x3
+    		edge3[i+1] = y+trany;               // y3
+    		edge3[i+2] = x*sin40+z*cos40+tranz; // z3
 		// right half aircraft
 		if(edge1[i+1]>0 || edge2[i+1]>0 || edge3[i+1]>0) i+=3;
-	    // print progress
+		// print progress
 		clockprint(start, k, N_x37, &past);
-    }
-    clockend(start);
-    fclose(fin);
+    	}
+    	clockend(start);
+	fclose(fin);
     
-    printf("\nTotal mesh number: %d\n", N_x37);
-    printf("Right mesh number: %d\n", i/3);
+	printf("\nTotal mesh number: %d\n", N_x37);
+	printf("Right mesh number: %d\n", i/3);
 
-    Air_X_37(air, normal, edge1, edge2, edge3);
+	Air_X_37(air, normal, edge1, edge2, edge3);
 
-    _mm_free(normal);
-    _mm_free(edge1);
-    _mm_free(edge2);   
-    _mm_free(edge3);
-    return 0;
+	_mm_free(normal);
+	_mm_free(edge1);
+	_mm_free(edge2);   
+	 _mm_free(edge3);
+	return 0;
 }
 
 
@@ -323,7 +324,7 @@ void Air_X_37(float *air, const float *normal, const float *edge1, const float *
 {
 	printf("\n\nGenerate the array of air-body detection...\n");
 	struct timeval start, past;
-    clockstart(&start, &past);
+	clockstart(&start, &past);
 	
 	int j, k, height, index, mCount;
 	float y, z;
@@ -422,8 +423,8 @@ int check_nan_fail(float *d_U)
 	float check;
 	int shift = 3.3*Nxy;
 	cudaMemcpy(&check, d_U+shift, sizeof(float), cudaMemcpyDeviceToHost);
-	if(check!=check)	return 1;
-	else				return 0;
+	if(check!=check) return 1;
+	else		 return 0;
 }
 
 
@@ -438,14 +439,14 @@ void save_data(const float *U)
 	
 	printf("\n\nSaving \"result.dat\" for Tecplot...\n");
 	fp = fopen("result.dat","w");
-    clockstart(&start, &past);
-    fprintf(fp, "TITLE = \"The Flow Field over Suttle X37 At Steady State\"\r\n");
+	clockstart(&start, &past);
+	fprintf(fp, "TITLE = \"The Flow Field over Suttle X37 At Steady State\"\r\n");
 	fprintf(fp, "VARIABLES = \"X\", \"Y\", \"Z\", \"Density\", \"UX\", \"UY\", \"UZ\", \"Preasure\", \"Temperature\"\r\n");
-    fprintf(fp, "ZONE I = %d, J = %d,  K = %d, F = POINT\r\n", Nx, Ny, Nz);
-    for(k=0; k<Nz; k++) {
-    	z = k*h;
+	fprintf(fp, "ZONE I = %d, J = %d,  K = %d, F = POINT\r\n", Nx, Ny, Nz);
+	for(k=0; k<Nz; k++) {
+    		z = k*h;
 		height = k*Nxy;
-			for(j=0; j<Ny; j++) {
+		for(j=0; j<Ny; j++) {
 			y = j*h;
 			row = height+j*Nx;
 			for(i=0; i<Nx; i++) {
