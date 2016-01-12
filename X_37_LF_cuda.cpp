@@ -11,33 +11,33 @@
 # define trany	(-0.293)
 # define tranz	0.8
 
-# define Ly		0.5
-# define Lz		1.0
-# define Lx		1.5
-# define Ny		64
-# define h		(Ly/(Ny-2))
-# define Nz		(Ny*2)
-# define Nx		(Ny*3)
+# define Ly	0.5
+# define Lz	1.0
+# define Lx	1.5
+# define Ny	64
+# define h	(Ly/(Ny-2))
+# define Nz	(Ny*2)
+# define Nx	(Ny*3)
 # define Nxy	(Nx*Ny)
 # define Nyz	(Ny*Nz)
-# define Nt		(Nx*Ny*Nz)
+# define Nt	(Nx*Ny*Nz)
 # define Nt2	(Nt*2)
 # define Nt3	(Nt*3)
 # define Nt4	(Nt*4)
-# define rat	0.00001	// dt/dx
+# define rat	0.00001	// (dt/dx)
 # define tar	(1.0/rat)	// dx/dt
-# define dt		(h*rat)
+# define dt	(h*rat)
 
 // http://www.engineeringtoolbox.com/standard-atmosphere-d_604.html
 # define rhos	0.00008283 // (kg/m^3)
 # define uxs	7000.0  // (m/s)
 # define uys	0.0
 # define uzs	0.0
-# define ps		5.2	// (Pa)
+# define ps	5.2	// (Pa)
 // http://www.engineeringtoolbox.com/specific-heat-ratio-d_602.html
-# define gamma	1.4
+# define gamma	1.401
 // https://en.wikipedia.org/wiki/Gas_constant#Specific_gas_constant
-# define R		287.05
+# define R	287.05 // (J/kg-K)
 // anonymous state set in the body of shuttle
 # define rhox	1.0
 # define px	100000.0
@@ -60,19 +60,19 @@ void clockprint	(struct timeval start, int k, int total, struct timeval *past);
 void clockend	(struct timeval start);
 int  Load_X_37	(float *air);
 void Air_X_37	(float *air,
+		 const float *normal,
+		 const float *edge1,
+		 const float *edge2,
+		 const float *edge3
+		);
+int  mesh_intersection_detection(float y,
+				 float z,
+				 float *xIntersec,
 				 const float *normal,
 				 const float *edge1,
 				 const float *edge2,
 				 const float *edge3
 				);
-int  mesh_intersection_detection(float y,
-							                   float z,
-								                 float *xIntersec,
-								           const float *normal,
-								           const float *edge1,
-								           const float *edge2,
-								           const float *edge3
-								           );
 void ray_casting_algorithm(float *air, int index, const float *xIntersec, int mCount);
 int check_nan_fail(float *d_U);
 void save_data(const float *U);
@@ -665,6 +665,5 @@ __global__ void gpu_boundary(float *U)
 			}
 		}
 	}
-		
-				
+
 }
