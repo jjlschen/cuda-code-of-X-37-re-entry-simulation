@@ -59,13 +59,15 @@ void clockstart	(struct timeval *start, struct timeval *past);
 void clockprint	(struct timeval start, int k, int total, struct timeval *past);
 void clockend	(struct timeval start);
 int  Load_X_37	(float *air);
-void Air_X_37	(float *air,
+void Air_X_37	(
+		 float *air,
 		 const float *normal,
 		 const float *edge1,
 		 const float *edge2,
 		 const float *edge3
 		);
-int  mesh_intersection_detection(float y,
+int  mesh_intersection_detection(
+				 float y,
 				 float z,
 				 float *xIntersec,
 				 const float *normal,
