@@ -283,14 +283,14 @@ int Load_X_37(float *air)
 		fscanf(fin, "%s%s%s%s%e%e%e", v, v, v, v, &x, &z, &y);
 		// rotation
 		normal[i]   = x*cos40-z*sin40;	// nx
-		normal[i+1] = y;				// ny
+		normal[i+1] = y;		// ny
 		normal[i+2] = x*sin40+z*cos40;	// nz
 		// load edge position
     		fscanf(fin, "%s%s%s%e%e%e", v, v, v, &x, &z, &y);
     		// rotation and translation
-    		edge1[i]   = x*cos40-z*sin40+tranx;	// x1
-    		edge1[i+1] = y+trany;				// y1
-    		edge1[i+2] = x*sin40+z*cos40+tranz;	// z1
+    		edge1[i]   = x*cos40-z*sin40+tranx; // x1
+    		edge1[i+1] = y+trany;		    // y1
+    		edge1[i+2] = x*sin40+z*cos40+tranz; // z1
     		fscanf(fin, "%s%e%e%e", v, &x, &z, &y);
     		edge2[i]   = x*cos40-z*sin40+tranx; // x2
     		edge2[i+1] = y+trany;               // y2
@@ -456,8 +456,8 @@ void save_data(const float *U)
 				ux  = U[index+Nt ]/rho;
 				uy  = U[index+Nt2]/rho;
 				uz  = U[index+Nt3]/rho;
-				p   = (gamma-1.0)*(U[index+Nt4]-0.5*rho*(sqr(ux)+sqr(uy)+sqr(uz)));	// Pa
-				T   = p/(R*rho);	// K
+				p   = (gamma-1.0)*(U[index+Nt4]-0.5*rho*(sqr(ux)+sqr(uy)+sqr(uz)));  // (Pa)
+				T   = p/(R*rho);  // (K)
 				fprintf(fp, "%7.3f%7.3f%7.3f  %.3e%11.3f%11.3f%11.3f  %.3e%11.3f\r\n", x, y, z, rho, ux, uy, uz, p, T);
 			}
 		}
