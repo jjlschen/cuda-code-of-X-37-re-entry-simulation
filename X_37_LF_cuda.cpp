@@ -176,7 +176,6 @@ void gpumalloc()
 	if( cudaMalloc((void **)&Gp, sz5) != cudaSuccess) failflag++;
 	if( cudaMalloc((void **)&Hp, sz5) != cudaSuccess) failflag++;
 	if( cudaMalloc((void **)&air, sz) != cudaSuccess) failflag++;
-	if( cudaMalloc((void **)&phi, sz) != cudaSuccess) failflag++;
 	if(failflag) printf("\n... Something failed...\n");
 	else 		 printf("\tdone\n");
 }
@@ -191,7 +190,6 @@ void gpufree()
 	if( cudaFree(Gp) != cudaSuccess) failflag++;
 	if( cudaFree(Hp) != cudaSuccess) failflag++;
 	if( cudaFree(air)!= cudaSuccess) failflag++;
-	if( cudaFree(phi)!= cudaSuccess) failflag++;
 	if(failflag) printf("\n... Something failed...\n");
 	else 		 printf("\tdone\n");
 	printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
